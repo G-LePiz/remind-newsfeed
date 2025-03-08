@@ -38,8 +38,8 @@ public class UserService {
         if (requestDto.getNewpassword().equals(requestDto.getPassword())) { //새로운 비밀번호는 기존 비밀번호와 동일할 수 없음
             throw new IllegalArgumentException("새로운 비밀번호는 기존 비밀번호와 동일할 수 없습니다.");
         }
-
-        user.updatePassword(requestDto.getNewpassword());
+        String encodeNewPassword = passwordEncoder.encode(requestDto.getNewpassword());
+        user.updatePassword(encodeNewPassword);
     }
 
     @Transactional
