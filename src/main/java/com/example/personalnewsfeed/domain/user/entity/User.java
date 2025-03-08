@@ -29,4 +29,8 @@ public class User {
         this.password = password;
         this.birthdate = birthdate;
     }
+
+    public void updatePassword(String newpassword) {
+        this.password = password;
+    }
 }
