@@ -2,14 +2,14 @@ package com.example.personalnewsfeed.domain.user.controller;
 
 import com.example.personalnewsfeed.domain.user.dto.request.user.DeleteUserRequestDto;
 import com.example.personalnewsfeed.domain.user.dto.request.user.UpdatePasswordRequestDto;
+import com.example.personalnewsfeed.domain.user.dto.response.user.UserResponseDto;
 import com.example.personalnewsfeed.domain.user.service.UserService;
 import com.example.personalnewsfeed.global.annotation.Auth;
 import com.example.personalnewsfeed.global.authargumentresolver.AuthUser;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,8 +17,13 @@ public class UserController {
 
     private final UserService userService;
 
+    @GetMapping("/users/profiles")
+    public ResponseEntity<UserResponseDto> findMyProfile(@Auth AuthUser authUser) {
+        return ResponseEntity.ok(userService.findMyProfile(authUser.getId()));
+    }
+
     @PatchMapping("/users/profiles/password")
-    public void updatePassword(@Auth AuthUser authUser, @RequestBody UpdatePasswordRequestDto requestDto) { // 비밀번호 변경
+    public void updatePassword(@Auth AuthUser authUser, @Valid @RequestBody UpdatePasswordRequestDto requestDto) { // 비밀번호 변경
         userService.updatePassword(authUser.getId(), requestDto);
     }
 

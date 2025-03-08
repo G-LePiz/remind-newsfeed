@@ -5,6 +5,7 @@ import com.example.personalnewsfeed.domain.user.dto.request.auth.SignupRequestDt
 import com.example.personalnewsfeed.domain.user.dto.response.auth.LoginResponseDto;
 import com.example.personalnewsfeed.domain.user.dto.response.auth.SignupResponseDto;
 import com.example.personalnewsfeed.domain.user.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<SignupResponseDto> signup(@RequestBody SignupRequestDto requestDto) {
+    public ResponseEntity<SignupResponseDto> signup(@Valid @RequestBody SignupRequestDto requestDto) {
         return ResponseEntity.ok(authService.signup(requestDto));
     }
 

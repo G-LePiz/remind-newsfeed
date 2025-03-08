@@ -1,4 +1,4 @@
-package com.example.personalnewsfeed.global.password;
+package com.example.personalnewsfeed.global.jwt.password;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;

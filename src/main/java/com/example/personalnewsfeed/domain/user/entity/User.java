@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Getter
 @Table(name = "users")
 @NoArgsConstructor
-public class User {
+public class User extends BaseEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 유저 id

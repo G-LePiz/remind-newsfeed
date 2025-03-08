@@ -6,7 +6,7 @@ import com.example.personalnewsfeed.domain.user.dto.response.auth.LoginResponseD
 import com.example.personalnewsfeed.domain.user.dto.response.auth.SignupResponseDto;
 import com.example.personalnewsfeed.domain.user.entity.User;
 import com.example.personalnewsfeed.domain.user.repository.UserRepository;
-import com.example.personalnewsfeed.global.password.PasswordEncoder;
+import com.example.personalnewsfeed.global.jwt.password.PasswordEncoder;
 import com.example.personalnewsfeed.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class AuthService {
         User user = new User(requestDto.getName(), requestDto.getEmail(), passwordEncode, requestDto.getBirthdate());
         userRepository.save(user);
 
-        return new SignupResponseDto(user.getId(), user.getName(), user.getEmail(), user.getBirthdate());
+        return new SignupResponseDto(user.getId(), user.getName(), user.getEmail(), user.getBirthdate(), user.getCreated_at());
     }
 
     @Transactional
