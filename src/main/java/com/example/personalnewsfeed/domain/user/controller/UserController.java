@@ -18,7 +18,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/users/profiles")
-    public ResponseEntity<UserResponseDto> findMyProfile(@Auth AuthUser authUser) {
+    public ResponseEntity<UserResponseDto> findMyProfile(@Auth AuthUser authUser) { // 본인 조회
         return ResponseEntity.ok(userService.findMyProfile(authUser.getId()));
     }
 
@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @DeleteMapping("/users/profiles/delete")
-    public void deleteUser(@Auth AuthUser authUser, @RequestBody DeleteUserRequestDto requestDto) {
+    public void deleteUser(@Auth AuthUser authUser, @RequestBody DeleteUserRequestDto requestDto) { // 회원 탈퇴
         userService.deleteUser(authUser.getId(), requestDto);
     }
 
