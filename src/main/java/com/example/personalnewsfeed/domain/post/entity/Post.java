@@ -21,4 +21,15 @@ public class Post extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
     private Profile profile;
+
+    public Post(Profile profile, String title, String content) {
+        this.profile = profile;
+        this.title = title;
+        this.content = content;
+    }
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }

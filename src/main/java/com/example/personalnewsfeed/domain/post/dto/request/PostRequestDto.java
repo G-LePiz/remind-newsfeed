@@ -1,4 +1,4 @@
-package com.example.personalnewsfeed.domain.post.dto;
+package com.example.personalnewsfeed.domain.post.dto.request;
 
 import lombok.Getter;
 

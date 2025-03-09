@@ -29,4 +29,9 @@ public class Profile extends BaseEntity {
         this.nickname = nickname;
         this.myintroduce = myintroduce;
     }
+
+    public void update(String nickname, String myintroduce) {
+        this.nickname = nickname;
+        this.myintroduce = myintroduce;
+    }
 }
