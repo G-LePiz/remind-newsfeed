@@ -39,17 +39,28 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponseDto> findAllPost(Long profileId) {
+    public List<PostResponseDto> findAllPost() {
         List<Post> posts = postRepository.findAll();
         List<PostResponseDto> dtos = new ArrayList<>();
 
         for (Post post : posts) {
-            AuthorDto authorDto = new AuthorDto(profileId, post.getProfile().getNickname());
+            AuthorDto authorDto = new AuthorDto(post.getProfile().getId(), post.getProfile().getNickname());
 
             dtos.add(new PostResponseDto(post.getId(), authorDto, post.getTitle(), post.getContent(), post.getCreated_at(), post.getUpdated_at()));
         }
 
         return dtos;
+    }
+
+    @Transactional(readOnly = true)
+    public PostResponseDto findPostById(Long id) {
+        Post post = postRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("찾을려는 게시물이 없습니다.")
+        );
+
+        AuthorDto authorDto = new AuthorDto(post.getProfile().getId(), post.getProfile().getNickname());
+
+        return new PostResponseDto(post.getId(),authorDto, post.getTitle(), post.getContent(), post.getCreated_at(), post.getUpdated_at());
     }
 
     @Transactional
@@ -84,4 +95,6 @@ public class PostService {
         }
         postRepository.deleteById(id);
     }
+
+
 }

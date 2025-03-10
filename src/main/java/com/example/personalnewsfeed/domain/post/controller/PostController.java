@@ -24,9 +24,14 @@ public class PostController {
         return ResponseEntity.ok(postService.save(authUser, postRequestDto));
     }
 
-    @GetMapping("/posts/serch")
-    public ResponseEntity<List<PostResponseDto>> findAllPost(@Auth AuthUser authUser) { // 게시글 전체 조회
-        return ResponseEntity.ok(postService.findAllPost(authUser.getId()));
+    @GetMapping("/posts")
+    public ResponseEntity<List<PostResponseDto>> findAllPost() { // 게시글 전체 조회
+        return ResponseEntity.ok(postService.findAllPost());
+    }
+
+    @GetMapping("/posts/{id}")
+    public ResponseEntity<PostResponseDto> findPostById(@PathVariable Long id) {
+        return ResponseEntity.ok(postService.findPostById(id));
     }
 
     @PatchMapping("/posts/{id}/update")

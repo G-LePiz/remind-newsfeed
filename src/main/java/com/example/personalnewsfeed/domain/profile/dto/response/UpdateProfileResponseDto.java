@@ -4,12 +4,12 @@ import lombok.Getter;
 
 @Getter
 public class UpdateProfileResponseDto {
-    private final Long id;
+    private final Long profileId;
     private final String nickname;
     private final String myintroduce;
 
-    public UpdateProfileResponseDto(Long id, String nickname, String myintroduce) {
-        this.id = id;
+    public UpdateProfileResponseDto(Long profileId, String nickname, String myintroduce) {
+        this.profileId = profileId;
         this.nickname = nickname;
         this.myintroduce = myintroduce;
     }

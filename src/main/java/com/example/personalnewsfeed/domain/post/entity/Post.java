@@ -17,6 +17,7 @@ public class Post extends BaseEntity {
     private Long id; // 아이디
     private String title; // 제목
     private String content; // 본문
+    private Integer likes_count; // 좋아요 수
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
@@ -26,6 +27,7 @@ public class Post extends BaseEntity {
         this.profile = profile;
         this.title = title;
         this.content = content;
+        this.likes_count = 0;
     }
 
     public void update(String title, String content) {

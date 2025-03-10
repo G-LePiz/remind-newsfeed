@@ -33,7 +33,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.findById(id));
     }
 
-    @PatchMapping("/profiles")
+    @PatchMapping("/profiles/update")
     public ResponseEntity<UpdateProfileResponseDto> updateProfiles(@Auth AuthUser authUser,
                                                                   @RequestBody UpdateProfileRequestDto requestDto) {
         return ResponseEntity.ok(profileService.updateProfiles(authUser.getId(), requestDto));
