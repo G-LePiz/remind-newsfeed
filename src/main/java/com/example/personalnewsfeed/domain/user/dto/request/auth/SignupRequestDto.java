@@ -8,7 +8,8 @@ import java.time.LocalDate;
 
 @Getter
 public class SignupRequestDto {
-    private String name; // 이름
+    private String username; // 이름
+    private String nickname; // 닉네임
     @Email
     private String email; // 이메일, 아이디
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*\\W)[^\\s]{8,16}$")

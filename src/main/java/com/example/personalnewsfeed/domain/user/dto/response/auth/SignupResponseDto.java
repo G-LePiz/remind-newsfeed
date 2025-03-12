@@ -8,16 +8,19 @@ import java.time.LocalDateTime;
 @Getter
 public class SignupResponseDto {
     private final Long id;
-    private final String name;
+    private final String username;
+    private final String nickname;
     private final String email;
     private final LocalDate birthdate;
     private final LocalDateTime createdAt;
 
-    public SignupResponseDto(Long id, String name, String email, LocalDate birthdate, LocalDateTime createdAt) {
+    public SignupResponseDto(Long id, String username, String nickname, String email, LocalDate birthdate, LocalDateTime createdAt) {
         this.id = id;
-        this.name = name;
+        this.username = username;
+        this.nickname = nickname;
         this.email = email;
         this.birthdate = birthdate;
         this.createdAt = createdAt;
     }
 }
+

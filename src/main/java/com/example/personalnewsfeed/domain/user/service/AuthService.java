@@ -27,10 +27,10 @@ public class AuthService {
         }
 
         String passwordEncode = passwordEncoder.encode(requestDto.getPassword());
-        User user = new User(requestDto.getName(), requestDto.getEmail(), passwordEncode, requestDto.getBirthdate());
+        User user = new User(requestDto.getUsername(), requestDto.getNickname(), requestDto.getEmail(), passwordEncode, requestDto.getBirthdate());
         userRepository.save(user);
 
-        return new SignupResponseDto(user.getId(), user.getName(), user.getEmail(), user.getBirthdate(), user.getCreated_at());
+        return new SignupResponseDto(user.getId(), user.getUsername(), user.getNickname(), user.getEmail(), user.getBirthdate(), user.getCreatedAt());
     }
 
     @Transactional
@@ -41,7 +41,7 @@ public class AuthService {
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 옳바르지않습니다.");
         }
-        String token = jwtUtil.createToken(user.getId(), user.getEmail());
+        String token = jwtUtil.createToken(user.getId(), user.getEmail(), user.getNickname());
 
         return new LoginResponseDto(token);
     }

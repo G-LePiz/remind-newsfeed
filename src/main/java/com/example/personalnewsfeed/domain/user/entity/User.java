@@ -16,15 +16,18 @@ public class User extends BaseEntity{
     private Long id; // 유저 id
 
     @Column(length = 20, nullable = false)
-    private String name; // 사용자 이름
+    private String username; // 사용자 이름
+    @Column(length = 20, nullable = false)
+    private String nickname; // 닉네임
     @Column(length = 225, nullable = false)
     private String email; // 이메일
     @Column(length = 80, nullable = false)
     private String password; // 비밀번호
     private LocalDate birthdate; // 생년월일
 
-    public User(String name, String email, String password, LocalDate birthdate) {
-        this.name = name;
+    public User(String username, String nickname, String email, String password, LocalDate birthdate) {
+        this.username = username;
+        this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.birthdate = birthdate;

@@ -1,17 +1,17 @@
 package com.example.personalnewsfeed.domain.comment.entity;
 
 import com.example.personalnewsfeed.domain.post.entity.Post;
-import com.example.personalnewsfeed.domain.profile.entity.Profile;
 import com.example.personalnewsfeed.domain.user.entity.BaseEntity;
+import com.example.personalnewsfeed.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
+
+@Getter
 @Entity
 @Table(name = "comments")
 @NoArgsConstructor
-@Getter
 public class Comment extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,10 +24,11 @@ public class Comment extends BaseEntity {
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
-    private Profile profile;
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Comment(Post post, String content) {
+    public Comment(User user, Post post, String content) {
+        this.user = user;
         this.post = post;
         this.content = content;
     }

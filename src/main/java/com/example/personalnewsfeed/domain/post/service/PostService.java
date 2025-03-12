@@ -1,99 +1,127 @@
 package com.example.personalnewsfeed.domain.post.service;
 
-import com.example.personalnewsfeed.domain.post.dto.*;
+import com.example.personalnewsfeed.domain.follow.entity.Follow;
+import com.example.personalnewsfeed.domain.follow.repository.FollowRepository;
 import com.example.personalnewsfeed.domain.post.dto.request.PostRequestDto;
 import com.example.personalnewsfeed.domain.post.dto.request.UpdatePostRequestDto;
+import com.example.personalnewsfeed.domain.post.dto.response.PostPageResponseDto;
 import com.example.personalnewsfeed.domain.post.dto.response.PostResponseDto;
 import com.example.personalnewsfeed.domain.post.dto.response.UpdatePostResponseDto;
 import com.example.personalnewsfeed.domain.post.entity.Post;
 import com.example.personalnewsfeed.domain.post.repository.PostRepository;
-import com.example.personalnewsfeed.domain.profile.entity.Profile;
-import com.example.personalnewsfeed.domain.profile.repository.ProfileRepository;
+import com.example.personalnewsfeed.domain.user.entity.User;
+import com.example.personalnewsfeed.domain.user.repository.UserRepository;
 import com.example.personalnewsfeed.global.authargumentresolver.AuthUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
-    private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
+    private final FollowRepository followRepository;
 
     @Transactional
-    public PostResponseDto save(AuthUser authUser, PostRequestDto postRequestDto) {
-        Profile profile = profileRepository.findById(authUser.getId()).orElseThrow(
-                () -> new IllegalArgumentException("프로필이 존재하지않습니다.")
+    public PostResponseDto savePost(AuthUser authUser, PostRequestDto requestDto) {
+        User user = userRepository.findById(authUser.getId()).orElseThrow(
+                () -> new IllegalArgumentException("사용자를 찾을 수 없습니다")
         );
-        Post post = new Post(profile, postRequestDto.getTitle(), postRequestDto.getContent());
-
+        Post post = new Post(user, requestDto.getTitle(), requestDto.getContent());
         postRepository.save(post);
 
-        AuthorDto author = new AuthorDto(profile.getId(), profile.getNickname());
-
-        return new PostResponseDto(post.getId(), author, post.getTitle(), post.getContent(), post.getCreated_at(), post.getUpdated_at());
+        return new PostResponseDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContent(), post.getCreatedAt(), post.getUpdatedAt());
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponseDto> findAllPost() {
-        List<Post> posts = postRepository.findAll();
-        List<PostResponseDto> dtos = new ArrayList<>();
+    public PostPageResponseDto findAll(LocalDateTime startDateTime, LocalDateTime endDateTime, int page, int size) {
+        int adjustPage = (page > 0) ? page -1 : 0;
 
-        for (Post post : posts) {
-            AuthorDto authorDto = new AuthorDto(post.getProfile().getId(), post.getProfile().getNickname());
+        PageRequest pageRequest = PageRequest.of(adjustPage, size, Sort.by("updatedAt").descending());
+        Page<Post> postPage;
 
-            dtos.add(new PostResponseDto(post.getId(), authorDto, post.getTitle(), post.getContent(), post.getCreated_at(), post.getUpdated_at()));
+        if (startDateTime != null && endDateTime != null && startDateTime.isAfter(endDateTime)) {
+            throw new IllegalArgumentException("시작일이 종료일보다 더 빠를 수 없습니다.");
+        }
+        if (startDateTime == null || endDateTime == null) {
+            postPage = postRepository.findAll(pageRequest);
+        } else {
+            postPage = postRepository.findAllByCreatedAtBetween(startDateTime, endDateTime, pageRequest);
         }
 
-        return dtos;
+        Page<PostResponseDto> responseDtos = postPage.map(posts -> new PostResponseDto(
+                posts.getId(),
+                posts.getUser().getNickname(),
+                posts.getTitle(),
+                posts.getContent(),
+                posts.getCreatedAt(),
+                posts.getUpdatedAt()
+        ));
+
+        return new PostPageResponseDto(responseDtos);
     }
 
     @Transactional(readOnly = true)
-    public PostResponseDto findPostById(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("찾을려는 게시물이 없습니다.")
+    public Page<PostResponseDto> findAllBylikes(Long id, int page, int size) {
+
+        int adjustedPage = (page > 0) ? page -1 : 0;
+
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("사용자가 존재하지않음")
         );
 
-        AuthorDto authorDto = new AuthorDto(post.getProfile().getId(), post.getProfile().getNickname());
+        List<Follow> followList = followRepository.findAllByFollower(user);
+        List<User> users = followList.stream()
+                .map(Follow :: getFollower)
+                .collect(Collectors.toList());
 
-        return new PostResponseDto(post.getId(),authorDto, post.getTitle(), post.getContent(), post.getCreated_at(), post.getUpdated_at());
+        PageRequest pageRequest = PageRequest.of(adjustedPage, size, Sort.by("updatedAt").descending());
+
+        Page<PostResponseDto> responseDtos = postRepository.findByUserInOrderByCreatedAtDesc(users, pageRequest)
+                .map(postResponseDto -> new PostResponseDto(
+                        postResponseDto.getPostId(),
+                        postResponseDto.getNickname(),
+                        postResponseDto.getTitle(),
+                        postResponseDto.getContent(),
+                        postResponseDto.getCreatedAt(),
+                        postResponseDto.getUpdatedAt()
+                ));
+
+        return responseDtos;
     }
 
     @Transactional
-    public UpdatePostResponseDto update(Long profileId, Long id, UpdatePostRequestDto requestDto) {
-        Profile profile = profileRepository.findById(profileId).orElseThrow(
-                () -> new IllegalArgumentException("프로필이 없습니다")
-        );
-
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("게시물이 없습니다")
-        );
-
-        if (!post.getProfile().getId().equals(profile.getId())) {
-            throw new IllegalArgumentException("작성자가 다릅니다.");
-        }
-
-        AuthorDto authorDto = new AuthorDto(profile.getId(), profile.getNickname());
-
-        post.update(requestDto.getTitle(), requestDto.getContent());
-
-        return new UpdatePostResponseDto(profile.getId(), authorDto, post.getTitle(), post.getContent(), post.getCreated_at(), post.getUpdated_at());
-    }
-
-    @Transactional
-    public void deleteById(Long profileId, Long id) {
-        Post post = postRepository.findById(id).orElseThrow(
+    public UpdatePostResponseDto updatePost(Long postId, Long id, UpdatePostRequestDto requestDto) {
+        Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("게시물이 없습니다.")
         );
-
-        if (!post.getProfile().getId().equals(profileId)) {
-            throw new IllegalArgumentException("작성자가 다릅니다.");
+        if (!post.getUser().getId().equals(id)) {
+            throw new IllegalArgumentException("작성자가 달라서 수정이 불가합니다.");
         }
-        postRepository.deleteById(id);
+        post.update(requestDto.getTitle(), requestDto.getContent());
+
+        return new UpdatePostResponseDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContent(), post.getLike_count(), post.getCreatedAt(), post.getUpdatedAt());
+    }
+
+    @Transactional
+    public void deletePost(Long postId, Long id) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new IllegalArgumentException("삭제할려는 게시물이 없습니다")
+        );
+        if (!post.getUser().getId().equals(id)) {
+            throw new IllegalArgumentException("작성자가 달라서 삭제가 불가능합니다.");
+        }
+        postRepository.delete(post);
     }
 
 

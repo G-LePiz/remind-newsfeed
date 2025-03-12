@@ -1,25 +1,26 @@
 package com.example.personalnewsfeed.domain.post.dto.response;
 
-import com.example.personalnewsfeed.domain.post.dto.AuthorDto;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
 public class UpdatePostResponseDto {
-    private final Long id;
-    private final AuthorDto author;
+    private final Long postId;
+    private final String nickname;
     private final String title;
     private final String content;
+    private final Integer like_count;
     private final LocalDateTime createdAt;
-    private final LocalDateTime deletedAt;
+    private final LocalDateTime updatedAt;
 
-    public UpdatePostResponseDto(Long id, AuthorDto author, String title, String content, LocalDateTime createdAt, LocalDateTime deletedAt) {
-        this.id = id;
-        this.author = author;
+    public UpdatePostResponseDto(Long postId, String nickname, String title, String content, Integer likeCount, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.postId = postId;
+        this.nickname = nickname;
         this.title = title;
         this.content = content;
+        like_count = likeCount;
         this.createdAt = createdAt;
-        this.deletedAt = deletedAt;
+        this.updatedAt = updatedAt;
     }
 }

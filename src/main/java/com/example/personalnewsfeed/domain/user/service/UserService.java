@@ -2,6 +2,7 @@ package com.example.personalnewsfeed.domain.user.service;
 
 import com.example.personalnewsfeed.domain.user.dto.request.user.DeleteUserRequestDto;
 import com.example.personalnewsfeed.domain.user.dto.request.user.UpdatePasswordRequestDto;
+import com.example.personalnewsfeed.domain.user.dto.response.user.OtherUserResponseDto;
 import com.example.personalnewsfeed.domain.user.dto.response.user.UserResponseDto;
 import com.example.personalnewsfeed.domain.user.entity.User;
 import com.example.personalnewsfeed.domain.user.repository.UserRepository;
@@ -24,7 +25,16 @@ public class UserService {
                 () -> new IllegalArgumentException("사용자가 존재하지않습니다.")
         );
 
-        return new UserResponseDto(user.getId(), user.getName(), user.getEmail(), user.getBirthdate());
+        return new UserResponseDto(user.getId(), user.getUsername(), user.getNickname(), user.getEmail(), user.getBirthdate());
+    }
+
+    @Transactional(readOnly = true)
+    public OtherUserResponseDto findUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("사용자가 존재하지않습니다.")
+        );
+
+        return new OtherUserResponseDto(user.getNickname(), user.getCreatedAt());
     }
 
     @Transactional
@@ -53,4 +63,6 @@ public class UserService {
 
         userRepository.deleteById(id);
     }
+
+
 }
