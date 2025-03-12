@@ -72,18 +72,19 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PostResponseDto> findAllBylikes(Long id, int page, int size) {
+    public Page<PostResponseDto> findAllByFollow(Long id, int page, int size) {
 
         int adjustedPage = (page > 0) ? page -1 : 0;
 
         User user = userRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("사용자가 존재하지않음")
-        );
+        ); // 1. user db에서 사용자 번호를 추출
 
-        List<Follow> followList = followRepository.findAllByFollower(user);
-        List<User> users = followList.stream()
-                .map(Follow :: getFollower)
-                .collect(Collectors.toList());
+        List<Follow> followList = followRepository.findAllByFollower(user); // 2. follow db에서 팔로우한 사람들을 리스트로 추출
+        List<User> users = new ArrayList<>(); // 3. user 리스트 생성해서 follow에다가 집어넣음.
+        for (Follow follow : followList) {
+            users.add(follow.getFollowing());
+        }
 
         PageRequest pageRequest = PageRequest.of(adjustedPage, size, Sort.by("updatedAt").descending());
 

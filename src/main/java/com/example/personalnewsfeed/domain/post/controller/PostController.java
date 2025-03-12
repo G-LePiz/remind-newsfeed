@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,7 +43,7 @@ public class PostController {
     public ResponseEntity<Page<PostResponseDto>> findAllBylikes(@RequestParam(name = "page", defaultValue = "1") int page,
                                                                 @RequestParam(name = "size", defaultValue = "10") int size,
                                                                 @Auth AuthUser authUser) {
-        return ResponseEntity.ok(postService.findAllBylikes(authUser.getId(), page, size));
+        return ResponseEntity.ok(postService.findAllByFollow(authUser.getId(), page, size));
     }
 
     @PatchMapping("/posts/{postId}")
