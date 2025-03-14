@@ -9,6 +9,9 @@ import com.example.personalnewsfeed.domain.user.entity.User;
 import com.example.personalnewsfeed.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,5 +39,19 @@ public class PostLikeService {
         postLikeRepository.save(postLike);
 
         return new PostLikeResponseDto(postLike.getPost().getId(), postLike.getUser().getNickname(), postLike.getPost().getTitle(), postLike.getPost().getContent(), postLike.getPost().getCreatedAt(), postLike.getPost().getUpdatedAt());
+    }
+
+    @Transactional
+    public void postUnLike(Long postId, Long id) {
+//        Post post = postRepository.findById(postId).orElseThrow(
+//                () -> new IllegalArgumentException("게시물이 없습니다.")
+//        );
+//        User user = userRepository.findById(id).orElseThrow(
+//                () -> new IllegalArgumentException("사용자가 없습니다.")
+//        );
+        PostLike likeposts = postLikeRepository.findByPost_IdAndUser_Id(postId, id).orElseThrow(
+                () -> new IllegalArgumentException("좋아요를 한 게시물이 없습니다.")
+        );
+        postLikeRepository.delete(likeposts);
     }
 }

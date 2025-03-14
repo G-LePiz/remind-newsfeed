@@ -6,6 +6,7 @@ import com.example.personalnewsfeed.global.annotation.Auth;
 import com.example.personalnewsfeed.global.authargumentresolver.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,5 +20,10 @@ public class PostLike {
     @PostMapping("/posts/{postId}/likes")
     public ResponseEntity<PostLikeResponseDto> postLike(@PathVariable Long postId, @Auth AuthUser authUser) {
         return ResponseEntity.ok(postLikeService.postLike(postId, authUser.getId()));
+    }
+
+    @DeleteMapping("/posts/{postId}/likes")
+    public void postUnLike(@PathVariable Long postId, @Auth AuthUser authUser) {
+        postLikeService.postUnLike(postId, authUser.getId());
     }
 }

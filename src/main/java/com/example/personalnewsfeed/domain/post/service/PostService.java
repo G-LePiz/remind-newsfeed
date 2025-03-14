@@ -90,8 +90,8 @@ public class PostService {
 
         Page<PostResponseDto> responseDtos = postRepository.findByUserInOrderByCreatedAtDesc(users, pageRequest)
                 .map(postResponseDto -> new PostResponseDto(
-                        postResponseDto.getPostId(),
-                        postResponseDto.getNickname(),
+                        postResponseDto.getId(),
+                        postResponseDto.getUser().getNickname(),
                         postResponseDto.getTitle(),
                         postResponseDto.getContent(),
                         postResponseDto.getCreatedAt(),

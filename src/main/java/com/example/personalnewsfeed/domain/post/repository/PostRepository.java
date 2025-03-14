@@ -13,5 +13,5 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByCreatedAtBetween(LocalDateTime startDateTime, LocalDateTime endDateTime, PageRequest pageRequest);
 
-    Page<PostResponseDto> findByUserInOrderByCreatedAtDesc(List<User> users, PageRequest pageRequest);
+    Page<Post> findByUserInOrderByCreatedAtDesc(List<User> users, PageRequest pageRequest);
 }
