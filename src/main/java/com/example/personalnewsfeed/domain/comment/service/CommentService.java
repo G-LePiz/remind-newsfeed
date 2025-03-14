@@ -68,7 +68,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new IllegalArgumentException("댓글을 찾을 수 없습니다.")
         );
-        if (!comment.getId().equals(id)) {
+        if (!comment.getUser().getId().equals(id)) {
             throw new IllegalArgumentException("작성자가 다릅니다.");
         }
         comment.update(requestDto.getContent());

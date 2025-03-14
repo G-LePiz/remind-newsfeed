@@ -39,7 +39,7 @@ public class PostController {
         return ResponseEntity.ok(postService.findAll(startDateTime, endDateTime, page, size));
     }
 
-    @GetMapping("/posts/likes")
+    @GetMapping("/posts/follow")
     public ResponseEntity<Page<PostResponseDto>> findAllBylikes(@RequestParam(name = "page", defaultValue = "1") int page,
                                                                 @RequestParam(name = "size", defaultValue = "10") int size,
                                                                 @Auth AuthUser authUser) {

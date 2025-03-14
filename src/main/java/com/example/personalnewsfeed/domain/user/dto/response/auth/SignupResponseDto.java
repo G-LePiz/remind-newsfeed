@@ -1,5 +1,6 @@
 package com.example.personalnewsfeed.domain.user.dto.response.auth;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
