@@ -2,6 +2,8 @@ package com.example.personalnewsfeed.domain.comment.service;
 
 import com.example.personalnewsfeed.domain.comment.dto.CommentRequestDto;
 import com.example.personalnewsfeed.domain.comment.dto.CommentResponseDto;
+import com.example.personalnewsfeed.domain.comment.dto.UpdateCommentRequestDto;
+import com.example.personalnewsfeed.domain.comment.dto.UpdateCommentResponseDto;
 import com.example.personalnewsfeed.domain.comment.entity.Comment;
 import com.example.personalnewsfeed.domain.comment.repository.CommentRepository;
 import com.example.personalnewsfeed.domain.post.entity.Post;
@@ -140,6 +142,51 @@ class CommentServiceTest {
         commentService.deleteComment(commentId, id);
         // then
         verify(commentRepository, times(1)).deleteById(commentId);
+    }
+
+    @Test
+    void 댓글을_찾을_수_없다2() {
+        // given
+        Long commentId = 1L;
+        Long id = 1L;
+        CommentRequestDto requestDto = mock();
+        BDDMockito.given(commentRepository.findById(commentId)).willReturn(Optional.empty());
+        // when
+        assertThrows(IllegalArgumentException.class, () -> commentService.deleteComment(commentId, id),
+                "댓글이 존재하지않습니다.");
+    }
+
+    @Test
+    void 댓글을_수정한다() {
+        // given
+        Long commentId = 1L;
+        Long id = 2L;
+        LocalDate birthdate = LocalDate.parse("2000-09-12");
+        User user = new User("name", "nickname", "email", "password", birthdate);
+        ReflectionTestUtils.setField(user, "id", id);
+        Post post = new Post(user, "title", "content");
+        Comment comment = new Comment(user, post, "content");
+        ReflectionTestUtils.setField(comment, "id", commentId);
+        UpdateCommentRequestDto requestDto = new UpdateCommentRequestDto();
+        ReflectionTestUtils.setField(requestDto, "content", "hello");
+        BDDMockito.given(commentRepository.findById(commentId)).willReturn(Optional.of(comment));
+        // when
+        UpdateCommentResponseDto responseDto = commentService.updateComment(commentId, id, requestDto);
+        // then
+        assertThat(responseDto).isNotNull();
+        assertThat(responseDto.getCommentId()).isEqualTo(commentId);
+    }
+
+    @Test
+    void 댓글을_찾을_수_없다3() {
+        // given
+        Long commentId = 1L;
+        Long id = 1L;
+        UpdateCommentRequestDto requestDto = mock();
+        BDDMockito.given(commentRepository.findById(commentId)).willReturn(Optional.empty());
+        // when
+        assertThrows(IllegalArgumentException.class, () -> commentService.updateComment(commentId, id, requestDto),
+                "댓글을 찾을 수 없습니다.");
     }
 
 

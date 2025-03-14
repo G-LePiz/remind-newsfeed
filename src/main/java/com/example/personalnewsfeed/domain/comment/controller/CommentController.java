@@ -7,7 +7,6 @@ import com.example.personalnewsfeed.domain.comment.dto.UpdateCommentResponseDto;
 import com.example.personalnewsfeed.domain.comment.service.CommentService;
 import com.example.personalnewsfeed.global.annotation.Auth;
 import com.example.personalnewsfeed.global.authargumentresolver.AuthUser;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +40,8 @@ public class CommentController {
     public ResponseEntity<UpdateCommentResponseDto> updateComment(@PathVariable Long commentId,
                                                                   @Auth AuthUser authUser,
                                                                   @RequestBody UpdateCommentRequestDto requestDto) {
-        return ResponseEntity.ok(commentService.updateComment(commentId, authUser.getId(), requestDto));
+        UpdateCommentResponseDto dto = commentService.updateComment(commentId, authUser.getId(), requestDto);
+        return ResponseEntity.ok(dto);
     }
 
     @DeleteMapping("/posts/comments/{commentId}")
